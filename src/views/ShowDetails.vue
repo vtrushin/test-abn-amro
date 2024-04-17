@@ -1,36 +1,31 @@
 <script setup lang="ts">
-	import { onMounted } from 'vue'
-	import { useShowStore } from '@/stores/show.js'
 	import { useRoute } from 'vue-router'
 	import ShowBlock from '@/components/ShowBlock.vue'
+	import { useShowQuery } from '@/api/queries'
 
 	const route = useRoute()
 	const showId = Number(route.params.id)
 
-	const showStore = useShowStore()
-
-	onMounted(() => {
-		showStore.loadShow(showId)
-	})
+	const { isPending, data: show, error } = useShowQuery({ showId })
 </script>
 
 <template>
-	<div v-if="showStore.isLoading">Loading...</div>
-	<div v-else-if="showStore.show">
+	<div v-if="isPending">Loading...</div>
+	<div v-else-if="show">
 		<RouterLink to="/">← Home</RouterLink>
-		<h1 v-text="showStore.show.name" />
+		<h1 v-text="show.name" />
 		<div class="show-body">
 			<div>
 				<ShowBlock
-					:src="showStore.show.image.medium"
-					:name="showStore.show.name"
-					:rating="showStore.show.rating.average"
+					:src="show.image?.medium"
+					:name="show.name"
+					:rating="show.rating.average"
 				/>
 			</div>
-			<div class="show-summary" v-html="showStore.show.summary" />
+			<div class="show-summary" v-html="show.summary" />
 		</div>
 	</div>
-	<div v-else-if="showStore.error">{{showStore.error}}</div>
+	<div v-else-if="error">{{error}}</div>
 </template>
 
 <style scoped>

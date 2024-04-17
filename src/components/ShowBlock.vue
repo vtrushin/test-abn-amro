@@ -8,9 +8,9 @@ defineProps<{
 
 <template>
 	<div class="show">
-		<img class="show-img" :src="src" :alt="name" />
+		<img v-if="!!src" class="show-img" :src="src" :alt="name" />
 		<div class="show-name">{{name}}</div>
-		<div class="show-rating">★ {{rating}}</div>
+		<div v-if="!!rating" class="show-rating">★ {{rating}}</div>
 	</div>
 </template>
 
@@ -19,10 +19,23 @@ a:global(:link) .show * {
 	text-decoration: inherit;
 	color: inherit;
 }
+.show {
+	width: 210px;
+}
+@media (width <= 800px) {
+	.show {
+		width: 100px;
+	}
+}
 
+.show-img {
+	width: 210px;
+	height: 295px;
+}
 @media (width <= 800px) {
 	.show-img {
-		max-width: 100px;
+		width: 100px;
+		height: 140px;
 	}
 }
 </style>

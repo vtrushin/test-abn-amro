@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-	<div class="show-group">
+	<div v-if="shows.length" class="show-group">
 		<div class="show-group-title">{{ title }}</div>
 		<div class="shows">
 			<RouterLink
@@ -17,7 +17,7 @@ defineProps<{
 				:to="`/show/${show.id}`"
 			>
 				<ShowBlock
-					:src="show.image.medium"
+					:src="show.image?.medium"
 					:name="show.name"
 					:rating="show.rating.average"
 				/>
@@ -34,8 +34,13 @@ defineProps<{
 }
 
 .show-group-title {
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: bold;
+}
+@media (width <= 800px) {
+	.show-group-title {
+		font-size: 20px;
+	}
 }
 
 .shows {
@@ -44,5 +49,10 @@ defineProps<{
 	grid-auto-flow: column;
 	justify-content: start;
 	overflow: auto;
+}
+@media (width <= 800px) {
+	.shows {
+		gap: 10px;
+	}
 }
 </style>

@@ -1,32 +1,47 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useShowsStore } from '@/stores/shows'
+import { computed, ref } from 'vue'
 import ShowGroup from '@/components/ShowGroup.vue'
+import ShowSearch from '@/components/ShowSearch.vue'
+import { useShowsQuery } from '@/api/queries'
 
-const showsStore = useShowsStore()
+const query = ref('')
 
-onMounted(() => {
-	showsStore.loadShows()
+const { isPending, data: shows, error } = useShowsQuery({
+	query
 })
+
+const genres = computed(() =>
+	new Set((shows.value ?? []).flatMap(show => show.genres))
+)
+
+const onSearchChange = (val: string) => {
+	query.value = val
+}
 </script>
 
 <template>
-	<div v-if="showsStore.isLoading">Loading...</div>
-	<div v-else-if="showsStore.shows" class="showcase">
+	<div class="search-wrapper">
+		<ShowSearch @change="onSearchChange" />
+	</div>
+	<div v-if="isPending">Loading...</div>
+	<div v-else-if="shows" class="showcase">
 		<ShowGroup
-			v-for="genre in showsStore.genres"
+			v-for="genre in genres"
 			:key="genre"
 			:title="genre"
-			:shows="Array.from(showsStore.shows)
-				.sort((a, b) => b.rating.average - a.rating.average)
+			:shows="Array.from(shows)
+				.sort((a, b) => (b.rating.average ?? 0) - (a.rating.average ?? 0))
 				.filter(show => show.genres.includes(genre))"
-			:loading="showsStore.isLoading"
 		/>
 	</div>
-	<div v-else-if="showsStore.error">{{showsStore.error}}</div>
+	<div v-else-if="error">{{error}}</div>
 </template>
 
 <style scoped>
+.search-wrapper {
+	text-align: center;
+	margin-bottom: 20px;
+}
 .showcase {
 	display: grid;
 	gap: 20px
