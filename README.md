@@ -1,7 +1,7 @@
 ### Test ABN AMRO
 
 ## Architecture
-- Chose Vite since it's required in a position in ABN AMRO
+- Chose Vite since it's required for a position in ABN AMRO
 - Chose `@tanstack/vue-query` as a cache-manager which has worked well in React
 - Created a project using
 - - `npm create vue@latest`
